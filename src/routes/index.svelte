@@ -1,12 +1,29 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-
-
-<!-- svelte-ignore a11y-missing-content -->
-<a href="/about"> vamos para o svelte</a>
-
-<style>
-    p{
-        font-size: 2rem;
+<script context="module">
+    export async function load({fetch}){
+        const res = await fetch(`
+https://api.themoviedb.org/3/movie/popular?api_key=a339283f39c01f20663e7e25fa7fd2d7&language=en-US&page=1`);
+        const data = await res.json();
+        console.log(data);
+        if(res.ok){
+            return{
+                props: {popular: data.results} 
+            }
+        }
     }
-</style>
+</script>
+
+
+<script>
+// @ts-nocheck
+
+    import FilmesPopular from "../components/FilmesPopular.svelte";
+    import SearchMovies from "../components/SearchMovies.svelte";
+    export let popular;
+    import {fly} from 'svelte/transition';
+</script>
+
+
+<section in:fly={{y: 50, duration: 500}} out:fly={{ duration: 500}}>
+    <SearchMovies/>
+    <FilmesPopular popular={popular}/>
+</section>
